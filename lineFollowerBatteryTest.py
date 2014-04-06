@@ -59,14 +59,17 @@ def sonar():
                           print("Far")
                   time.sleep(1)
 
-threading.Timer(1, sonar).start()
+#threading.Timer(1, sonar).start()
 
 GPIO.setup(7,GPIO.IN)
 GPIO.setup(11,GPIO.IN)
 GPIO.setup(15,GPIO.IN)
 
+theBeginningOfTime=time.time()
+
 try:
        while True:
+		  print('Time since start= '(+time.time()-theBeginningOfTime))
                   if GPIO.input(12)==1 and GPIO.input(13)==1 or globalstop==1 or GPIO.input(7)==0 or GPIO.input(11)==0 or GPIO.input(15)==0:
                           a.ChangeDutyCycle(0)
                           b.ChangeDutyCycle(0)

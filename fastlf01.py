@@ -1,12 +1,12 @@
-
-#import necessary modules
 import RPi.GPIO as GPIO, sys, threading, time
 
 #use physical pin numbering
 GPIO.setmode(GPIO.BOARD)
 
 #set up digital line detectors as inputs
+# left line sensor. 0=white, 1=black
 GPIO.setup(12, GPIO.IN)
+# right line sensor. 0=white, 1=black
 GPIO.setup(13, GPIO.IN)
 
 #use pwm on inputs so motors don't go too fast
@@ -22,6 +22,40 @@ a.start(0)
 GPIO.setup(26, GPIO.OUT)
 b=GPIO.PWM(26,20)
 b.start(0)
+
+slowspeed = 30
+fastspeed = 45
+
+def straight():
+  q.ChangeDutyCycle(fastspeed)
+  p.ChangeDutyCycle(0)
+  a.ChangeDutyCycle(fastspeed)
+  b.ChangeDutyCycle(0)
+  print('straight')
+
+def turnleft():
+  q.ChangeDutyCycle(slowspeed)
+  p.ChangeDutyCycle(0)
+  a.ChangeDutyCycle(fastspeed)
+  b.ChangeDutyCycle(0)
+  print('left')
+
+def turnright():
+  q.ChangeDutyCycle(fastspeed)
+  p.ChangeDutyCycle(0)
+  a.ChangeDutyCycle(slowspeed)
+  b.ChangeDutyCycle(0)
+  print('right')
+
+def stopall():
+  q.ChangeDutyCycle(0)
+  p.ChangeDutyCycle(0)
+  a.ChangeDutyCycle(0)
+  b.ChangeDutyCycle(0)
+  print('stop')
+
+lastleft = 0
+lastright = 0
 
 #make a global variable to communcate between sonar function and main loop
 globalstop=0
@@ -59,38 +93,30 @@ def sonar():
                           print("Far")
                   time.sleep(1)
 
-threading.Timer(1, sonar).start()
+# ignore sonar for now
+# threading.Timer(1, sonar).start()
 
 GPIO.setup(7,GPIO.IN)
 GPIO.setup(11,GPIO.IN)
 GPIO.setup(15,GPIO.IN)
 
+# Let's get going
+straight()
+
+# main loop
 try:
-       while True:
-                  if GPIO.input(12)==1 and GPIO.input(13)==1 or globalstop==1 or GPIO.input(7)==0 or GPIO.input(11)==0 or GPIO.input(15)==0:
-                          a.ChangeDutyCycle(0)
-                          b.ChangeDutyCycle(0)
-                          p.ChangeDutyCycle(0)
-                          q.ChangeDutyCycle(0)
-                          print('stop')
-                  elif GPIO.input(12)==0 and GPIO.input(13)==0:
-                          p.ChangeDutyCycle(30)
-                          q.ChangeDutyCycle(0)
-                          b.ChangeDutyCycle(30)
-                          a.ChangeDutyCycle(0)
-                          print('straight')
-                  elif GPIO.input(13)==1:
-                          q.ChangeDutyCycle(30)
-                          p.ChangeDutyCycle(0)
-                          a.ChangeDutyCycle(0)
-                          b.ChangeDutyCycle(30)
-                          print('right')
-                  elif GPIO.input(12)==1:
-                          q.ChangeDutyCycle(0)
-                          p.ChangeDutyCycle(30)
-                          a.ChangeDutyCycle(30)
-                          b.ChangeDutyCycle(0)
-                          print('left')
+  while True:
+    left = GPIO.input(12)
+    right = GPIO.input(13)
+    if left==1 and right==1 or globalstop==1 or GPIO.input(7)==0 or GPIO.input(11)==0 or GPIO.input(15)==0:
+      stop()
+    elif left == 1 and lastleft == 0:
+      turnleft()
+    elif right == 1 and lastright == 0:
+      turnright()
+    lastleft = left
+    lastright = right
+
 except KeyboardInterrupt:
        GPIO.cleanup()
        sys.exit()
