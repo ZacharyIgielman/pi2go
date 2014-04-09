@@ -1,4 +1,3 @@
-
 #import necessary modules
 import RPi.GPIO as GPIO, sys, threading, time
 
@@ -69,7 +68,7 @@ theBeginningOfTime=time.time()
 
 try:
        while True:
-		  print('Time since start= '(+time.time()-theBeginningOfTime))
+		  print(str(+time.time()-theBeginningOfTime))
                   if GPIO.input(12)==1 and GPIO.input(13)==1 or globalstop==1 or GPIO.input(7)==0 or GPIO.input(11)==0 or GPIO.input(15)==0:
                           a.ChangeDutyCycle(0)
                           b.ChangeDutyCycle(0)
