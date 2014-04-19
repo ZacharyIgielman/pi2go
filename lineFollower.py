@@ -1,5 +1,3 @@
-
-#import necessary modules
 import RPi.GPIO as GPIO, sys, threading, time
 
 #use physical pin numbering
@@ -23,11 +21,22 @@ GPIO.setup(26, GPIO.OUT)
 b=GPIO.PWM(26,20)
 b.start(0)
 
-#make a global variable to communcate between sonar function and main loop
+#make a global variable to communicate between sonar function and main loop
 globalstop=0
+finished = False
+fast = 40
+slow = 30
+LED1 = 22
+LED2 = 18
+LED3 = 11
+LED4 = 07
+GPIO.setup(LED1, GPIO.OUT)
+GPIO.setup(LED2, GPIO.OUT)
+GPIO.setup(LED3, GPIO.OUT)
+GPIO.setup(LED4, GPIO.OUT)
 
 def sonar():
-       while True:
+       while finished != True:
                   global globalstop
                   GPIO_TRIGGER=8
                   GPIO_ECHO=8
@@ -59,38 +68,52 @@ def sonar():
                           print("Far")
                   time.sleep(1)
 
-threading.Timer(1, sonar).start()
+#threading.Timer(1, sonar).start()
 
-GPIO.setup(7,GPIO.IN)
-GPIO.setup(11,GPIO.IN)
-GPIO.setup(15,GPIO.IN)
+#GPIO.setup(7,GPIO.IN)
+#GPIO.setup(11,GPIO.IN)
+#GPIO.setup(15,GPIO.IN)
+
+def setLEDs(L1, L2, L3, L4):
+  GPIO.output(LED1, L1)
+  GPIO.output(LED2, L2)
+  GPIO.output(LED3, L3)
+  GPIO.output(LED4, L4)
+
+setLEDs(1, 1, 1, 1)
 
 try:
        while True:
-                  if GPIO.input(12)==1 and GPIO.input(13)==1 or globalstop==1 or GPIO.input(7)==0 or GPIO.input(11)==0 or GPIO.input(15)==0:
+#                  if GPIO.input(12)==1 and GPIO.input(13)==1 or globalstop==1:
+                  if False:
                           a.ChangeDutyCycle(0)
                           b.ChangeDutyCycle(0)
                           p.ChangeDutyCycle(0)
                           q.ChangeDutyCycle(0)
+                          setLEDs(1, 1, 1, 1)
                           print('stop')
                   elif GPIO.input(12)==0 and GPIO.input(13)==0:
-                          p.ChangeDutyCycle(30)
+                          p.ChangeDutyCycle(fast)
                           q.ChangeDutyCycle(0)
-                          b.ChangeDutyCycle(30)
+                          b.ChangeDutyCycle(fast)
                           a.ChangeDutyCycle(0)
+                          setLEDs(1, 0, 0, 1)
                           print('straight')
-                  elif GPIO.input(13)==1:
-                          q.ChangeDutyCycle(30)
+                  elif GPIO.input(12)==1:
+                          q.ChangeDutyCycle(fast)
                           p.ChangeDutyCycle(0)
                           a.ChangeDutyCycle(0)
-                          b.ChangeDutyCycle(30)
+                          b.ChangeDutyCycle(fast)
+                          setLEDs(1, 1, 0, 0)
                           print('right')
-                  elif GPIO.input(12)==1:
+                  elif GPIO.input(13)==1:
                           q.ChangeDutyCycle(0)
-                          p.ChangeDutyCycle(30)
-                          a.ChangeDutyCycle(30)
+                          p.ChangeDutyCycle(fast)
+                          a.ChangeDutyCycle(fast)
                           b.ChangeDutyCycle(0)
+                          setLEDs(0, 0, 1, 1)
                           print('left')
 except KeyboardInterrupt:
+       finished = True  # stop other loops
        GPIO.cleanup()
        sys.exit()

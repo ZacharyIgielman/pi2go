@@ -23,45 +23,66 @@ GPIO.setup(26, GPIO.OUT)
 b=GPIO.PWM(26,20)
 b.start(0)
 
-slowspeed = 30
-fastspeed = 45
+slowspeed = 20
+fastspeed = 100
+LED1 = 22
+LED2 = 18
+LED3 = 11
+LED4 = 07
+GPIO.setup(LED1, GPIO.OUT)
+GPIO.setup(LED2, GPIO.OUT)
+GPIO.setup(LED3, GPIO.OUT)
+GPIO.setup(LED4, GPIO.OUT)
 
 def straight():
-  q.ChangeDutyCycle(fastspeed)
-  p.ChangeDutyCycle(0)
-  a.ChangeDutyCycle(fastspeed)
-  b.ChangeDutyCycle(0)
+  p.ChangeDutyCycle(fastspeed)
+  q.ChangeDutyCycle(0)
+  b.ChangeDutyCycle(fastspeed)
+  a.ChangeDutyCycle(0)
+  setLEDs(1, 0, 0, 1)
   print('straight')
 
 def turnleft():
-  q.ChangeDutyCycle(slowspeed)
-  p.ChangeDutyCycle(0)
-  a.ChangeDutyCycle(fastspeed)
-  b.ChangeDutyCycle(0)
+  p.ChangeDutyCycle(slowspeed)
+  q.ChangeDutyCycle(0)
+  b.ChangeDutyCycle(fastspeed)
+  a.ChangeDutyCycle(0)
+  setLEDs(0, 0, 1, 1)
   print('left')
 
 def turnright():
-  q.ChangeDutyCycle(fastspeed)
-  p.ChangeDutyCycle(0)
-  a.ChangeDutyCycle(slowspeed)
-  b.ChangeDutyCycle(0)
+  p.ChangeDutyCycle(fastspeed)
+  q.ChangeDutyCycle(0)
+  b.ChangeDutyCycle(slowspeed)
+  a.ChangeDutyCycle(0)
+  setLEDs(1, 1, 0, 0)
   print('right')
 
 def stopall():
-  q.ChangeDutyCycle(0)
   p.ChangeDutyCycle(0)
-  a.ChangeDutyCycle(0)
+  q.ChangeDutyCycle(0)
   b.ChangeDutyCycle(0)
+  a.ChangeDutyCycle(0)
+  setLEDs(1, 1, 1, 1)
   print('stop')
+
+def setLEDs(L1, L2, L3, L4):
+  GPIO.output(LED1, L1)
+  GPIO.output(LED2, L2)
+  GPIO.output(LED3, L3)
+  GPIO.output(LED4, L4)
+
+setLEDs(1, 1, 1, 1)
 
 lastleft = 0
 lastright = 0
 
 #make a global variable to communcate between sonar function and main loop
 globalstop=0
+Going=True
 
 def sonar():
-       while True:
+       while Going:
                   global globalstop
                   GPIO_TRIGGER=8
                   GPIO_ECHO=8
@@ -94,11 +115,11 @@ def sonar():
                   time.sleep(1)
 
 # ignore sonar for now
-# threading.Timer(1, sonar).start()
+threading.Timer(1, sonar).start()
 
-GPIO.setup(7,GPIO.IN)
-GPIO.setup(11,GPIO.IN)
-GPIO.setup(15,GPIO.IN)
+#GPIO.setup(7,GPIO.IN)
+#GPIO.setup(11,GPIO.IN)
+#GPIO.setup(15,GPIO.IN)
 
 # Let's get going
 straight()
@@ -108,15 +129,18 @@ try:
   while True:
     left = GPIO.input(12)
     right = GPIO.input(13)
-    if left==1 and right==1 or globalstop==1 or GPIO.input(7)==0 or GPIO.input(11)==0 or GPIO.input(15)==0:
-      stop()
+#    if left==1 and right==1 or globalstop==1:
+    if False:
+      stopall()
     elif left == 1 and lastleft == 0:
       turnleft()
     elif right == 1 and lastright == 0:
       turnright()
     lastleft = left
     lastright = right
+    time.sleep(0.01)
 
 except KeyboardInterrupt:
+       Going = False
        GPIO.cleanup()
        sys.exit()
