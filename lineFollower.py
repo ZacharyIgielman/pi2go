@@ -24,8 +24,8 @@ b.start(0)
 #make a global variable to communicate between sonar function and main loop
 globalstop=0
 finished = False
-fast = 40
-slow = 30
+fast = 20
+slow = 10
 LED1 = 22
 LED2 = 18
 LED3 = 11
@@ -84,8 +84,7 @@ setLEDs(1, 1, 1, 1)
 
 try:
        while True:
-#                  if GPIO.input(12)==1 and GPIO.input(13)==1 or globalstop==1:
-                  if False:
+                  if GPIO.input(12)==1 and GPIO.input(13)==1 or globalstop==1:
                           a.ChangeDutyCycle(0)
                           b.ChangeDutyCycle(0)
                           p.ChangeDutyCycle(0)
@@ -100,17 +99,17 @@ try:
                           setLEDs(1, 0, 0, 1)
                           print('straight')
                   elif GPIO.input(12)==1:
-                          q.ChangeDutyCycle(fast)
-                          p.ChangeDutyCycle(0)
-                          a.ChangeDutyCycle(0)
-                          b.ChangeDutyCycle(fast)
-                          setLEDs(1, 1, 0, 0)
-                          print('right')
-                  elif GPIO.input(13)==1:
                           q.ChangeDutyCycle(0)
                           p.ChangeDutyCycle(fast)
                           a.ChangeDutyCycle(fast)
                           b.ChangeDutyCycle(0)
+                          setLEDs(1, 1, 0, 0)
+                          print('right')
+                  elif GPIO.input(13)==1:
+                          q.ChangeDutyCycle(fast)
+                          p.ChangeDutyCycle(0)
+                          a.ChangeDutyCycle(0)
+                          b.ChangeDutyCycle(fast)
                           setLEDs(0, 0, 1, 1)
                           print('left')
 except KeyboardInterrupt:

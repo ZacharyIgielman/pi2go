@@ -23,7 +23,7 @@ GPIO.setup(26, GPIO.OUT)
 b=GPIO.PWM(26,20)
 b.start(0)
 
-slowspeed = 20
+slowspeed = 50
 fastspeed = 100
 LED1 = 22
 LED2 = 18
@@ -42,19 +42,19 @@ def straight():
   setLEDs(1, 0, 0, 1)
   print('straight')
 
-def turnleft():
-  p.ChangeDutyCycle(slowspeed)
-  q.ChangeDutyCycle(0)
+def turnright():
+  p.ChangeDutyCycle(0)
+  q.ChangeDutyCycle(slowspeed)
   b.ChangeDutyCycle(fastspeed)
   a.ChangeDutyCycle(0)
   setLEDs(0, 0, 1, 1)
   print('left')
 
-def turnright():
+def turnleft():
   p.ChangeDutyCycle(fastspeed)
   q.ChangeDutyCycle(0)
-  b.ChangeDutyCycle(slowspeed)
-  a.ChangeDutyCycle(0)
+  b.ChangeDutyCycle(0)
+  a.ChangeDutyCycle(slowspeed)
   setLEDs(1, 1, 0, 0)
   print('right')
 
@@ -115,7 +115,7 @@ def sonar():
                   time.sleep(1)
 
 # ignore sonar for now
-threading.Timer(1, sonar).start()
+#threading.Timer(1, sonar).start()
 
 #GPIO.setup(7,GPIO.IN)
 #GPIO.setup(11,GPIO.IN)
@@ -129,10 +129,9 @@ try:
   while True:
     left = GPIO.input(12)
     right = GPIO.input(13)
-#    if left==1 and right==1 or globalstop==1:
-    if False:
+    if left==1 and right==1 or globalstop==1:
       stopall()
-    elif left == 1 and lastleft == 0:
+    if left == 1 and lastleft == 0:
       turnleft()
     elif right == 1 and lastright == 0:
       turnright()

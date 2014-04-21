@@ -1,15 +1,4 @@
-import RPi.GPIO as GPIO, sys, threading, pygame
-from pygame.locals import *
-
-# set up pygame
-pygame.init()
-mainClock = pygame.time.Clock()
-
-# set up the window
-WINDOWWIDTH = 400
-WINDOWHEIGHT = 400
-windowSurface = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT), 0, 32)
-pygame.display.set_caption('Input')
+import RPi.GPIO as GPIO, sys, threading, time
 
 #use physical pin numbering
 GPIO.setmode(GPIO.BOARD)
@@ -28,8 +17,7 @@ GPIO.setup(26, GPIO.OUT)
 b=GPIO.PWM(26,20)
 b.start(0)
 
-slowspeed = 40
-fastspeed = 100
+fastspeed = 60
 
 def straight():
   p.ChangeDutyCycle(fastspeed)
@@ -39,7 +27,7 @@ def straight():
   print('straight')
 
 def turnleft():
-  p.ChangeDutyCycle(slowspeed)
+  p.ChangeDutyCycle(0)
   q.ChangeDutyCycle(0)
   b.ChangeDutyCycle(fastspeed)
   a.ChangeDutyCycle(0)
@@ -48,7 +36,7 @@ def turnleft():
 def turnright():
   p.ChangeDutyCycle(fastspeed)
   q.ChangeDutyCycle(0)
-  b.ChangeDutyCycle(slowspeed)
+  b.ChangeDutyCycle(0)
   a.ChangeDutyCycle(0)
   print('right')
 
@@ -98,35 +86,23 @@ def sonar():
 
 threading.Timer(1, sonar).start()
 
-GPIO.setup(7,GPIO.IN)
-GPIO.setup(11,GPIO.IN)
-GPIO.setup(15,GPIO.IN)
-
 # main loop
 try:
   while True:
-    if globalstop=1 or GPIO.input(7)==0 or GPIO.input(11)==0 or GPIO.input(15)==0:
+    if globalstop==1:
       stopall()
     else:
-      for event in pygame.event.get():
-        if event.type == QUIT:
-          pygame.quit()
-          Going = False
-          GPIO.cleanup()
-          sys.exit()
-        if event.type == KEYDOWN:
-            # change the keyboard variables
-            if event.key == K_LEFT or event.key == ord('a'):
-                turnleft()
-            if event.key == K_RIGHT or event.key == ord('d'):
-                turnright()
-            if event.key == K_UP or event.key == ord('w'):
-                straight()
-            if event.key == K_DOWN or event.key == ord('s'):
-                stopall()
+      testVar = raw_input("What direction (press letter then enter)? (w: forward, a: left, d: right, s: stop)")
+      if testVar=="a":
+        turnleft()
+      elif testVar=="d":
+        turnright()
+      elif testVar=="w":
+        straight()
+      elif testVar=="s":
+        stopall()
     time.sleep(0.01)
 except KeyboardInterrupt:
-  pygame.quit()
   Going = False
   GPIO.cleanup()
   sys.exit()

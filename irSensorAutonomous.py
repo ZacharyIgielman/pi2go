@@ -1,7 +1,7 @@
 import time, RPi.GPIO as GPIO, sys
 
-fast=100
-slow=50
+fast=50
+slow=30
 
 GPIO.setmode(GPIO.BOARD)
 
@@ -19,30 +19,37 @@ MotorBfwd=GPIO.PWM(26,50)
 MotorAbk=GPIO.PWM(21,50)
 MotorBbk=GPIO.PWM(24,50)
 
-while True:
-	if GPIO.input(7)+GPIO.input(11)+GPIO.input(15)==3:
-		MotorAfwd.start(fast)
-		MotorBfwd.start(fast)
-		MotorAbk.stop(0)
-		MotorBbk.stop(0)
-	else:
-		MotorAfwd.stop(0)
-        	MotorBfwd.stop(0)
-        	MotorAbk.start(10)
-        	MotorBbk.start(10)
-		time.sleep(1)
-		MotorAbk.stop(0)
-        	MotorBbk.stop(0)
-		if (GPIO.input(7)==0): #left
-	        	MotorAbk.start(slow)
-        		MotorBbk.start(fast)
-			time.sleep(1)
-        	if (GPIO.input(11)==0): #right
-                	MotorAbk.start(fast)
-                	MotorBbk.start(slow)
-                	time.sleep(1)
-        	if (GPIO.input(15)==0): #center
-                	MotorAbk.start(slow)
-                	MotorBbk.start(fast)
-                	time.sleep(1)
+MotorAfwd.start(0)
+MotorBfwd.start(0)
+MotorAbk.start(0)
+MotorBbk.start(0)
 
+while True:
+  left=GPIO.input(7)
+  right=GPIO.input(11)
+  center=GPIO.input(15)
+  if left+right+center==3:
+    MotorAfwd.ChangeDutyCycle(fast)
+    MotorBfwd.ChangeDutyCycle(fast)
+    MotorAbk.ChangeDutyCycle(0)
+    MotorBbk.ChangeDutyCycle(0)
+  else:
+    MotorAfwd.ChangeDutyCycle(0)
+    MotorBfwd.ChangeDutyCycle(0)
+    MotorAbk.ChangeDutyCycle(slow)
+    MotorBbk.ChangeDutyCycle(slow)
+    time.sleep(0.5)
+    MotorAbk.ChangeDutyCycle(0)
+    MotorBbk.ChangeDutyCycle(0)
+    if (left==0):
+      MotorAbk.ChangeDutyCycle(fast)
+      MotorBbk.ChangeDutyCycle(slow)
+      time.sleep(2)
+    if (right==0):
+      MotorAbk.ChangeDutyCycle(slow)
+      MotorBbk.ChangeDutyCycle(fast)
+      time.sleep(2)
+    if (center==0):
+      MotorAbk.ChangeDutyCycle(slow)
+      MotorBbk.ChangeDutyCycle(fast)
+      time.sleep(2)
