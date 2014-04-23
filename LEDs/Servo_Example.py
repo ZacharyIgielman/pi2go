@@ -11,8 +11,8 @@ import time
 # bmp = PWM(0x40, debug=True)
 pwm = PWM(0x40, debug=True)
 
-servoMin = 150  # Min pulse length out of 4096
-servoMax = 600  # Max pulse length out of 4096
+servoMin = 0  # Min pulse length out of 4096
+servoMax = 4096  # Max pulse length out of 4096
 
 def setServoPulse(channel, pulse):
   pulseLength = 1000000                   # 1,000,000 us per second
@@ -26,10 +26,13 @@ def setServoPulse(channel, pulse):
 
 pwm.setPWMFreq(60)                        # Set frequency to 60 Hz
 while (True):
-  # Change speed of continuous servo on channel O
   pwm.setPWM(0, 0, servoMin)
+  pwm.setPWM(1, 0, servoMin)
+  pwm.setPWM(2, 0, servoMin)
   time.sleep(1)
   pwm.setPWM(0, 0, servoMax)
+  pwm.setPWM(1, 0, servoMax)
+  pwm.setPWM(2, 0, servoMax)
   time.sleep(1)
 
 
