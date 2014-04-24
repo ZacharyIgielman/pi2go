@@ -12,7 +12,7 @@ import time
 pwm = PWM(0x40, debug=True)
 
 servoMin = 0  # Min pulse length out of 4096
-servoMax = 4096  # Max pulse length out of 4096
+servoMax = 4095  # Max pulse length out of 4096
 
 def setServoPulse(channel, pulse):
   pulseLength = 1000000                   # 1,000,000 us per second
@@ -34,6 +34,34 @@ while (True):
   pwm.setPWM(1, 0, servoMax)
   pwm.setPWM(2, 0, servoMax)
   time.sleep(1)
-
-
+  time.sleep(1)
+  pwm.setPWM(0, 0, servoMax)
+  pwm.setPWM(1, 0, servoMin)
+  pwm.setPWM(2, 0, servoMin)
+  time.sleep(1)
+  time.sleep(1)
+  pwm.setPWM(0, 0, servoMin)
+  pwm.setPWM(1, 0, servoMax)
+  pwm.setPWM(2, 0, servoMin)
+  time.sleep(1)
+  time.sleep(1)
+  pwm.setPWM(0, 0, servoMin)
+  pwm.setPWM(1, 0, servoMin)
+  pwm.setPWM(2, 0, servoMax)
+  time.sleep(1)
+  time.sleep(1)
+  pwm.setPWM(0, 0, servoMin)
+  pwm.setPWM(1, 0, servoMax)
+  pwm.setPWM(2, 0, servoMax)
+  time.sleep(1)
+  time.sleep(1)
+  pwm.setPWM(0, 0, servoMax)
+  pwm.setPWM(1, 0, servoMin)
+  pwm.setPWM(2, 0, servoMax)
+  time.sleep(1)
+  time.sleep(1)
+  pwm.setPWM(0, 0, servoMax)
+  pwm.setPWM(1, 0, servoMax)
+  pwm.setPWM(2, 0, servoMin)
+  time.sleep(1)
 
