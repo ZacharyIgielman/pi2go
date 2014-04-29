@@ -52,20 +52,20 @@ b = GPIO.PWM(R2, 20)
 b.start(0)
 
 #make a global variable to communicate between sonar function and main loop
-globalstop=0
+tooclose = False
 finished = False
-fast = 40
+fast = 100
 slow = 30
 
 # Define Colour IDs for the RGB LEDs
 Blue = 0
-Red = 1
-Green = 2
+Green = 1
+Red = 2
 pwmMax = 4095 # maximum PWM value
 
 def sonar():
        while finished != True:
-                  global globalstop
+                  global tooclose
                   GPIO_TRIGGER=8
                   GPIO_ECHO=8
                   GPIO.setup(8,GPIO.OUT)
@@ -89,10 +89,10 @@ def sonar():
                   # That was the distance there and back so halve the value
                   distance = distance / 2
                   if distance<20:
-                          globalstop=1
+                          tooclose = True
                           print("Too close")
                   else:
-                          globalstop=0
+                          tooclose = False
                           print("Far")
                   time.sleep(1)
 
@@ -107,25 +107,39 @@ def setAllLEDs (red, green, blue):
   for i in range(5):
     setLEDs(i, red, green, blue)
 
-def getLight ():     # Work out which direction is brightest
-  frontLeft = pcfADC.readADC(0) # get a value
-  frontRight = pcfADC.readADC(1) # get a value
-  rearLeft = pcfADC.readADC(2) # get a value
-  rearRight = pcfADC.readADC(3) # get a value
-
-
-
-
 # Switch all LEDs Off
 setAllLEDs (0, 0, 0)
 
 try:
        while True:
-                  frontLeft  = pcfADC.readADC(0) # get all light readings
-                  frontRight = pcfADC.readADC(1)
-                  rearLeft   = pcfADC.readADC(2)
-                  rearRight  = pcfADC.readADC(3)
-                  if globalstop==1 or GPIO.input(7)==0 or GPIO.input(11)==0 or GPIO.input(15)==0:
+                  try:
+                    frontLeft  = pcfADC.readADC(0) # get all light readings
+                    time.sleep(0.01)
+                    frontRight = pcfADC.readADC(1)
+                    time.sleep(0.01)
+                    rearLeft   = pcfADC.readADC(2)
+                    time.sleep(0.01)
+                    rearRight  = pcfADC.readADC(3)
+                    time.sleep(0.01)
+                  except:
+                    time.sleep(0.1)
+                  if tooclose == True:
+                          p.ChangeDutyCycle(0)
+                          q.ChangeDutyCycle(fast)
+                          a.ChangeDutyCycle(0)
+                          b.ChangeDutyCycle(fast)
+                          setAllLEDs(0, 0, 0)    # switch all LEDs On for Reverse
+                          print('reverse')
+                          time.sleep(1)
+                          p.ChangeDutyCycle(0)
+                          q.ChangeDutyCycle(fast)
+                          a.ChangeDutyCycle(fast)
+                          b.ChangeDutyCycle(0)
+                          setAllLEDs(0, pwmMax, 0) # Turn LEDs Green for Spin
+                          print('spin')
+                          time.sleep(1)
+                          tooclase = False
+                  if GPIO.input(7)==0 or GPIO.input(11)==0 or GPIO.input(15)==0:
                           p.ChangeDutyCycle(0)
                           q.ChangeDutyCycle(0)
                           a.ChangeDutyCycle(0)
@@ -139,17 +153,17 @@ try:
                           b.ChangeDutyCycle(fast)
                           setAllLEDs(0, pwmMax, 0) # Turn LEDs Green for Spin
                           print('spin')
-                  elif frontLeft > (frontRight + 10): # may need to adjust this magic numnber 10
+                  elif frontLeft > (frontRight + 5): # may need to adjust this magic numnber 10
                           p.ChangeDutyCycle(slow)
                           q.ChangeDutyCycle(0)
                           a.ChangeDutyCycle(fast)
                           b.ChangeDutyCycle(0)
                           setAllLEDs(0, 0, pwmMax) # Turn LEDs Blue to Left
                           print('left')
-                  elif frontRight > (frontLeft + 10): # may need to adjust this magic number 10
-                          p.ChangeDutyCycle(slow)
+                  elif frontRight > (frontLeft + 5): # may need to adjust this magic number 10
+                          p.ChangeDutyCycle(fast)
                           q.ChangeDutyCycle(0)
-                          a.ChangeDutyCycle(fast)
+                          a.ChangeDutyCycle(slow)
                           b.ChangeDutyCycle(0)
                           setAllLEDs(pwmMax, 0, 0) # Turn LEDs Red to Right
                           print('right')
