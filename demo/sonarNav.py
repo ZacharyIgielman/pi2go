@@ -24,15 +24,15 @@ GPIO.setup(21,GPIO.OUT)
 GPIO.setup(24,GPIO.OUT)
 GPIO.setup(26,GPIO.OUT)
 
-MotorAfwd=GPIO.PWM(19,50)
-MotorBfwd=GPIO.PWM(26,50)
-MotorAbk=GPIO.PWM(21,50)
-MotorBbk=GPIO.PWM(24,50)
+a=GPIO.PWM(19,50)
+p=GPIO.PWM(26,50)
+b=GPIO.PWM(21,50)
+q=GPIO.PWM(24,50)
 
-MotorAfwd.start(0)
-MotorBfwd.start(0)
-MotorAbk.start(0)
-MotorBbk.start(0)
+a.start(0)
+p.start(0)
+b.start(0)
+q.start(0)
 
 # Set pins as output and input
 GPIO.setup(GPIO_TRIGGER,GPIO.OUT)  # Trigger
@@ -68,18 +68,18 @@ while True:
   distance = distance / 2
 
   if distance>10:
-    MotorAfwd.ChangeDutyCycle(fast)
-    MotorBfwd.ChangeDutyCycle(fast)
-    MotorAbk.ChangeDutyCycle(0)
-    MotorBbk.ChangeDutyCycle(0)
+    a.ChangeDutyCycle(fast)
+    p.ChangeDutyCycle(fast)
+    b.ChangeDutyCycle(0)
+    q.ChangeDutyCycle(0)
   else:
-    MotorAfwd.ChangeDutyCycle(0)
-    MotorBfwd.ChangeDutyCycle(0)
-    MotorAbk.ChangeDutyCycle(slow)
-    MotorBbk.ChangeDutyCycle(slow)
+    a.ChangeDutyCycle(0)
+    p.ChangeDutyCycle(0)
+    b.ChangeDutyCycle(slow)
+    q.ChangeDutyCycle(slow)
     time.sleep(0.5)
-    MotorAbk.ChangeDutyCycle(fast)
-    MotorBbk.ChangeDutyCycle(slow)
+    b.ChangeDutyCycle(fast)
+    q.ChangeDutyCycle(slow)
     time.sleep(2)
 
 # Reset GPIO settings
