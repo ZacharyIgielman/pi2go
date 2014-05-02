@@ -1,3 +1,4 @@
+#coding: utf-8
 import RPi.GPIO as GPIO, sys, threading, time
 from Adafruit_PWM_Servo_Driver import PWM
 
@@ -44,8 +45,8 @@ b.start(0)
 #make a global variable to communicate between sonar function and main loop
 globalstop=0
 finished = False
-fast = 40
-slow = 30
+fast = 60
+slow = 40
 
 # Define Colour IDs for the RGB LEDs
 Blue = 0
@@ -53,8 +54,6 @@ Red = 1
 Green = 2
 pwmMax = 4095 # maximum PWM value
 
-slowspeed = 50
-fastspeed = 100
 
 def straight():
   p.ChangeDutyCycle(fastspeed)
@@ -131,12 +130,12 @@ def setAllLEDs (red, green, blue):
 # Switch all LEDs Off
 setAllLEDs (0, 0, 0)
 
-state=0
+state=1
 
 def main():
   while True:
-    if state==0:
-      print(“slow line follower”)
+    if state==1:
+      print("slow line follower")
       if GPIO.input(12)==1 and GPIO.input(13)==1 or globalstop==1 or GPIO.input(7)==0 or GPIO.input(11)==0 or GPIO.input(15)==0:
         p.ChangeDutyCycle(0)
         q.ChangeDutyCycle(0)
@@ -161,21 +160,8 @@ def main():
         a.ChangeDutyCycle(fast)
         b.ChangeDutyCycle(0)
         setAllLEDs(0, 0, pwmMax) # Turn LEDs Blue to Left
-    if state==1:
-      print(“fast line follower”)
-      left = GPIO.input(12)
-      right = GPIO.input(13)
-      if left==1 and right==1 or globalstop==1:
-        stopall()
-      if left == 1 and lastleft == 0:
-        turnleft()
-      elif right == 1 and lastright == 0:
-        turnright()
-      lastleft = left
-      lastright = right
-      time.sleep(0.01)
     if state==2:
-      print(“ir obstacle”)
+      print("ir obstacle")
       left=GPIO.input(7)
       right=GPIO.input(11)
       center=GPIO.input(15)
@@ -205,8 +191,11 @@ def main():
           q.ChangeDutyCycle(fast)
           time.sleep(2)
     if state==3:
-      print(“sonar bot”)
+      print("sonar bot")
+      GPIO_TRIGGER=8
+      GPIO_ECHO=8
       finished=True
+      GPIO.setup(GPIO_TRIGGER,GPIO.OUT)      # Echo
       # Send 10us pulse to trigger
       GPIO.output(GPIO_TRIGGER, True)
       time.sleep(0.00001)
@@ -246,7 +235,7 @@ try:
     raw_input()
     state=state+1
     if state>3:
-      state=0
+      state=1
 except KeyboardInterrupt:
   finished = True  # stop other loops
   setAllLEDs (0, 0, 0)

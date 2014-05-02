@@ -23,7 +23,7 @@ GPIO.setup(26, GPIO.OUT)
 b=GPIO.PWM(26,20)
 b.start(0)
 
-slowspeed = 50
+slowspeed = 20
 fastspeed = 100
 LED1 = 22
 LED2 = 18
