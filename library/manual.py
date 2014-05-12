@@ -1,36 +1,31 @@
-import time
-import curses
-from sys import exit
 import pi2go
 
 pi2go.init()
 
-shell = curses.initscr()
-shell.nodelay(False)
-
 while True:
-    key = shell.getch()
 
-    if key == 119:
-        print("Forward")
-        pi2go.forward(100)
+	key=raw_input("Where do you want to go (W, A, S, D or other)?")
 
-    elif key == 115:
-        print ("Backward")
-        pi2go.reverse(100)    
-	   
-    elif key == 97:
-        print ("Left")
-        pi2go.spinLeft(50)
+        if key=="d":
+		pi2go.setAllLEDs(0, 4095, 0)
+                print "right"
+                pi2go.spinRight(100)
 
-    elif key == 100:
-        print ("Right")
-        spinRight(50)
-      
-    if key == 24:
-        curses.endwin()
-        exit(0)
-    time.sleep(0.03)
-    pi2go.stop()
+        elif key=="a":
+		pi2go.setAllLEDs(0, 0, 4095)
+                print "left"
+		pi2go.spinLeft(100)
 
-pi2go.cleanup()
+        elif key=="s":
+		pi2go.setAllLEDs(4095, 0, 0)
+                print "back"
+                pi2go.reverse(100)
+
+        elif key=="w":
+		pi2go.setAllLEDs(4095, 4095, 4095)
+                print "up"
+                pi2go.forward(100)
+
+	else:
+		pi2go.setAllLEDs(0, 0, 0)
+		pi2go.stop()

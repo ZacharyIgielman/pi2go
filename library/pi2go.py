@@ -257,7 +257,7 @@ def irCentre():
     
 # irAll(): Returns true if any of the Obstacle sensors are triggered
 def irAll():
-    if GPIO.input(irFL)==0 or GPIO.input(irFR)==0 or GPIO.input(irCentre)==0:
+    if GPIO.input(irFL)==0 or GPIO.input(irFR)==0 or GPIO.input(irMID)==0:
         return True
     else:
         return False

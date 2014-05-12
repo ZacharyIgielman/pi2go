@@ -136,28 +136,28 @@ def main():
   while True:
     if state==1:
       print("slow line follower")
-      if GPIO.input(12)==1 and GPIO.input(13)==1 or globalstop==1 or GPIO.input(7)==0 or GPIO.input(11)==0 or GPIO.input(15)==0:
-        p.ChangeDutyCycle(0)
+#      if GPIO.input(12)==1 and GPIO.input(13)==1 or globalstop==1 or GPIO.input(7)==0 or GPIO.input(11)==0 or GPIO.input(15)==0:
+#        p.ChangeDutyCycle(0)
+#        q.ChangeDutyCycle(0)
+#        a.ChangeDutyCycle(0)
+#        b.ChangeDutyCycle(0)
+#        setAllLEDs(0, 0, 0)    # switch all LEDs Off for Stop
+      if GPIO.input(12)==0 and GPIO.input(13)==0:
+        p.ChangeDutyCycle(fast-10)
         q.ChangeDutyCycle(0)
-        a.ChangeDutyCycle(0)
-        b.ChangeDutyCycle(0)
-        setAllLEDs(0, 0, 0)    # switch all LEDs Off for Stop
-      elif GPIO.input(12)==0 and GPIO.input(13)==0:
-        p.ChangeDutyCycle(fast)
-        q.ChangeDutyCycle(0)
-        a.ChangeDutyCycle(fast)
+        a.ChangeDutyCycle(fast-10)
         b.ChangeDutyCycle(0)
         setAllLEDs(pwmMax, pwmMax, pwmMax)  # Turn LEDs White for Forwards
       elif GPIO.input(13)==1:
-        p.ChangeDutyCycle(fast)
+        p.ChangeDutyCycle(fast-10)
         q.ChangeDutyCycle(0)
         a.ChangeDutyCycle(0)
-        b.ChangeDutyCycle(fast)
+        b.ChangeDutyCycle(fast/2)
         setAllLEDs(pwmMax, 0, 0) # Turn LEDs Red for Right
       elif GPIO.input(12)==1:
         p.ChangeDutyCycle(0)
-        q.ChangeDutyCycle(fast)
-        a.ChangeDutyCycle(fast)
+        q.ChangeDutyCycle(fast/2)
+        a.ChangeDutyCycle(fast-10)
         b.ChangeDutyCycle(0)
         setAllLEDs(0, 0, pwmMax) # Turn LEDs Blue to Left
     if state==2:
