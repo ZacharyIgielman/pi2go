@@ -3,34 +3,24 @@ import pi2go
 
 pi2go.init()
 
+pwmMax = 4095
 fast = 40
-slow = 30
 
 try:
        while True:
-                  elif GPIO.input(12)==0 and GPIO.input(13)==0:
-                          p.ChangeDutyCycle(fast)
-                          q.ChangeDutyCycle(0)
-                          a.ChangeDutyCycle(fast)
-                          b.ChangeDutyCycle(0)
-                          setAllLEDs(pwmMax, pwmMax, pwmMax)  # Turn LEDs White for Forwards
+                  if pi2go.irLeftLine() and pi2go.irRightLine():
+                          pi2go.forward(fast)
+                          pi2go.setAllLEDs(pwmMax, pwmMax, pwmMax)  # Turn LEDs White for Forwards
                           print('straight')
-                  elif GPIO.input(13)==1:
-                          p.ChangeDutyCycle(fast)
-                          q.ChangeDutyCycle(0)
-                          a.ChangeDutyCycle(0)
-                          b.ChangeDutyCycle(fast)
-                          setAllLEDs(pwmMax, 0, 0) # Turn LEDs Red for Right
+                  elif pi2go.irLeftLine()==False:
+                          pi2go.spinRight(fast)
+                          pi2go.setAllLEDs(pwmMax, 0, 0) # Turn LEDs Red for Right
                           print('right')
-                  elif GPIO.input(12)==1:
-                          p.ChangeDutyCycle(0)
-                          q.ChangeDutyCycle(fast)
-                          a.ChangeDutyCycle(fast)
-                          b.ChangeDutyCycle(0)
-                          setAllLEDs(0, 0, pwmMax) # Turn LEDs Blue to Left
+                  elif pi2go.irRightLine()==False:
+                          pi2go.spinLeft(fast)
+                          pi2go.setAllLEDs(0, 0, pwmMax) # Turn LEDs Blue to Left
                           print('left')
 except KeyboardInterrupt:
-       finished = True  # stop other loops
-       setAllLEDs (0, 0, 0)
-       GPIO.cleanup()
+       pi2go.setAllLEDs (0, 0, 0)
+       pi2go.cleanup()
        sys.exit()

@@ -30,6 +30,5 @@ try:
     time.sleep(0.01)
 
 except KeyboardInterrupt:
-       Going = False
-       GPIO.cleanup()
+       pi2go.cleanup()
        sys.exit()
