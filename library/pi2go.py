@@ -86,8 +86,8 @@ R2 = 21
 irFL = 7
 irFR = 11
 irMID = 15
-lineRight = 12
-lineLeft = 13
+lineRight = 13
+lineLeft = 12
 
 # Define Colour IDs for the RGB LEDs
 Blue = 0
