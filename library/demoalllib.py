@@ -12,17 +12,23 @@ fastspeed = 100
 lastleft = 0
 lastright = 0
 
+finished=0
+
 def updateDistance():
-  global globalDistance
+  global globalDistance, finished
   while True:
+    if finished==1:
+      break
     globalDistance=pi2go.getDistance()
     time.sleep(0.2)
 
 threading.timer(0.2,updateDistance())
 
-def mainLoop:
-  global globalDistance, globalStop, state
+def mainLoop():
+  global globalDistance, globalStop, state, finished
   while True:
+    if finished==1:
+      break
     if globalStop==1 or globalDistance<5:
       pi2go.stop()
     else:
@@ -48,28 +54,28 @@ def mainLoop:
         time.sleep(0.01)
       elif state==2:
         if globalDistance>15:
-		      pi2go.forward(50)
-	      else:
-		      pi2go.reverse(30)
-		      time.sleep(0.5)
-		      pi2go.turnReverse(30,50)
-		      time.sleep(3)
+          pi2go.forward(50)
+        else:
+          pi2go.reverse(30)
+          time.sleep(0.5)
+          pi2go.turnReverse(30,50)
+          time.sleep(3)
       elif state==3:
         if globalDistance>15:
-		      pi2go.forward(50)
-	      else:
-		      pi2go.spinLeft(50)
+          pi2go.forward(50)
+        else:
+          pi2go.spinLeft(50)
       elif state==4:
-	      if pi2go.irAll()==False:
-		      pi2go.forward(fast)
-	      else:
-		      ir=pi2go.irRight()
-		      pi2go.reverse(slow)
-		      time.sleep(0.5)
-		      if ir:
-			      pi2go.turnReverse(50,30)
-		      else:
-			      pi2go.turnReverse(30,50)
+        if pi2go.irAll()==False:
+          pi2go.forward(50)
+        else:
+          ir=pi2go.irRight()
+          pi2go.reverse(30)
+          time.sleep(0.5)
+          if ir:
+            pi2go.turnReverse(50,30)
+          else:
+            pi2go.turnReverse(30,50)
           time.sleep(3)
         
 threading.timer(1,mainLoop())
@@ -107,5 +113,6 @@ try:
     else:
       pi2go.stop()
 except KeyboardInterrupt:
+  finished=1
   pi2go.cleanup()
   sys.exit()
