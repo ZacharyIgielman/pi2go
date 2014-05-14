@@ -14,7 +14,6 @@ while True:
 		pi2go.setAllLEDs(4095, 0, 0)
 		pi2go.reverse(slow)
 		time.sleep(0.5)
-		pi2go.stop()
 		pi2go.turnReverse(slow,fast)
 		pi2go.setAllLEDs(0, 4095, 4095)
 		time.sleep(3)
