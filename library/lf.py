@@ -4,6 +4,7 @@ import pi2go
 pi2go.init()
 
 pwmMax = 4095
+
 fast = 40
 
 try:
