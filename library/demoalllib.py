@@ -22,7 +22,7 @@ def updateDistance():
     globalDistance=pi2go.getDistance()
     time.sleep(0.2)
 
-threading.timer(0.2,updateDistance())
+threading.Timer(0.2,updateDistance).start()
 
 def mainLoop():
   global globalDistance, globalStop, state, finished
@@ -78,14 +78,14 @@ def mainLoop():
             pi2go.turnReverse(30,50)
           time.sleep(3)
         
-threading.timer(1,mainLoop())
+threading.Timer(1,mainLoop).start()
 
 try:
   while True:
-    in=raw_input("")
+    inp=input("")
     globalstop=1
     pi2go.setAllLEDs(4095, 0, 0)
-    if in=="":
+    if inp=="":
       globalstop=0
       if state==4:
         state=0
@@ -102,13 +102,13 @@ try:
         pi2go.setAllLEDs(4095, 0, 4095)
       else:
         pi2go.setAllLEDs(0, 0, 4095)
-    elif in=="w":
+    elif inp=="w":
       pi2go.straight(60)
-    elif in=="a":
+    elif inp=="a":
       pi2go.spinLeft(60)
-    elif in=="d":
+    elif inp=="d":
       pi2go.spinRight(60)
-    elif in=="s":
+    elif inp=="s":
       pi2go.reverse(60)
     else:
       pi2go.stop()
