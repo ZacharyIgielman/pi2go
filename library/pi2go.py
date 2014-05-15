@@ -2,7 +2,7 @@
 #
 # Python Module to externalise all Pi2Go specific hardware
 #
-# Created by Gareth Davies, May 2014
+# Created by Gareth Davies and Zachary Igielman, May 2014
 # Copyright 4tronix
 #
 # This code is in the public domain and may be freely copied and used
@@ -29,6 +29,8 @@
 # spinRight(speed): Sets motors to turn opposite directions at speed. 0 <= speed <= 100
 # turnForward(leftSpeed, rightSpeed): Moves forwards in an arc by setting different speeds. 0 <= leftSpeed,rightSpeed <= 100
 # turnreverse(leftSpeed, rightSpeed): Moves backwards in an arc by setting different speeds. 0 <= leftSpeed,rightSpeed <= 100
+# go(leftSpeed, rightSpeed): controls motors in both directions independently using different positive/negative speeds. -100<= leftSpeed,rightSpeed <= 100
+# go(speed): controls motors in both directions together with positive/negative speed parameter. -100<= speed <= 100
 #======================================================================
 
 
@@ -208,6 +210,28 @@ def turnReverse(leftSpeed, rightSpeed):
     q.ChangeDutyCycle(leftSpeed)
     a.ChangeDutyCycle(0)
     b.ChangeDutyCycle(rightSpeed)
+
+# go(leftSpeed, rightSpeed): controls motors in both directions independently using different positive/negative speeds. -100<= leftSpeed,rightSpeed <= 100
+def go(leftSpeed, rightSpeed):
+    if leftSpeed<0:
+        p.ChangeDutyCycle(0)
+        q.ChangeDutyCycle(abs(leftSpeed))
+    else:
+        q.ChangeDutyCycle(0)
+        p.ChangeDutyCycle(leftSpeed)
+    if rightSpeed<0:
+        a.ChangeDutyCycle(0)
+        b.ChangeDutyCycle(abs(rightSpeed))
+    else:
+        b.ChangeDutyCycle(0)
+        a.ChangeDutyCycle(rightSpeed)
+
+# go(speed): controls motors in both directions together with positive/negative speed parameter. -100<= speed <= 100
+def goBoth(speed):
+    if speed<0:
+        reverse(abs(speed))
+    else:
+        forward(speed)
 
 # End of Motor Functions
 #======================================================================
