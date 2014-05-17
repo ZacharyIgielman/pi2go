@@ -168,6 +168,10 @@ def stop():
     q.ChangeDutyCycle(0)
     a.ChangeDutyCycle(0)
     b.ChangeDutyCycle(0)
+    p.ChangeFrequency(((4/9)*0)+0.555556)
+    q.ChangeFrequency(((4/9)*0)+0.555556)
+    a.ChangeFrequency(((4/9)*0)+0.555556)
+    b.ChangeFrequency(((4/9)*0)+0.555556)
     
 # forward(speed): Sets both motors to move forward at speed. 0 <= speed <= 100
 def forward(speed):
@@ -175,6 +179,10 @@ def forward(speed):
     q.ChangeDutyCycle(0)
     a.ChangeDutyCycle(speed)
     b.ChangeDutyCycle(0)
+    p.ChangeFrequency(((4/9)*speed)+0.555556)
+    q.ChangeFrequency(((4/9)*0)+0.555556)
+    a.ChangeFrequency(((4/9)*speed)+0.555556)
+    b.ChangeFrequency(((4/9)*0)+0.555556)
     
 # reverse(speed): Sets both motors to reverse at speed. 0 <= speed <= 100
 def reverse(speed):
@@ -182,6 +190,10 @@ def reverse(speed):
     q.ChangeDutyCycle(speed)
     a.ChangeDutyCycle(0)
     b.ChangeDutyCycle(speed)
+    p.ChangeFrequency(((4/9)*0)+0.555556)
+    q.ChangeFrequency(((4/9)*speed)+0.555556)
+    a.ChangeFrequency(((4/9)*0)+0.555556)
+    b.ChangeFrequency(((4/9)*speed)+0.555556)
 
 # spinLeft(speed): Sets motors to turn opposite directions at speed. 0 <= speed <= 100
 def spinLeft(speed):
@@ -189,6 +201,10 @@ def spinLeft(speed):
     q.ChangeDutyCycle(speed)
     a.ChangeDutyCycle(speed)
     b.ChangeDutyCycle(0)
+    p.ChangeFrequency(((4/9)*0)+0.555556)
+    q.ChangeFrequency(((4/9)*speed)+0.555556)
+    a.ChangeFrequency(((4/9)*speed)+0.555556)
+    b.ChangeFrequency(((4/9)*0)+0.555556)
     
 # spinRight(speed): Sets motors to turn opposite directions at speed. 0 <= speed <= 100
 def spinRight(speed):
@@ -196,6 +212,10 @@ def spinRight(speed):
     q.ChangeDutyCycle(0)
     a.ChangeDutyCycle(0)
     b.ChangeDutyCycle(speed)
+    p.ChangeFrequency(((4/9)*speed)+0.555556)
+    q.ChangeFrequency(((4/9)*0)+0.555556)
+    a.ChangeFrequency(((4/9)*0)+0.555556)
+    b.ChangeFrequency(((4/9)*speed)+0.555556)
     
 # turnForward(leftSpeed, rightSpeed): Moves forwards in an arc by setting different speeds. 0 <= leftSpeed,rightSpeed <= 100
 def turnForward(leftSpeed, rightSpeed):
@@ -203,6 +223,10 @@ def turnForward(leftSpeed, rightSpeed):
     q.ChangeDutyCycle(0)
     a.ChangeDutyCycle(rightSpeed)
     b.ChangeDutyCycle(0)
+    p.ChangeFrequency(((4/9)*leftSpeed)+0.555556)
+    q.ChangeFrequency(((4/9)*0)+0.555556)
+    a.ChangeFrequency(((4/9)*rightSpeed)+0.555556)
+    b.ChangeFrequency(((4/9)*0)+0.555556)
     
 # turnReverse(leftSpeed, rightSpeed): Moves backwards in an arc by setting different speeds. 0 <= leftSpeed,rightSpeed <= 100
 def turnReverse(leftSpeed, rightSpeed):
@@ -210,21 +234,33 @@ def turnReverse(leftSpeed, rightSpeed):
     q.ChangeDutyCycle(leftSpeed)
     a.ChangeDutyCycle(0)
     b.ChangeDutyCycle(rightSpeed)
+    p.ChangeFrequency(((4/9)*0)+0.555556)
+    q.ChangeFrequency(((4/9)*leftSpeed)+0.555556)
+    a.ChangeFrequency(((4/9)*0)+0.555556)
+    b.ChangeFrequency(((4/9)*rightSpeed)+0.555556)
 
 # go(leftSpeed, rightSpeed): controls motors in both directions independently using different positive/negative speeds. -100<= leftSpeed,rightSpeed <= 100
 def go(leftSpeed, rightSpeed):
     if leftSpeed<0:
         p.ChangeDutyCycle(0)
         q.ChangeDutyCycle(abs(leftSpeed))
+        p.ChangeFrequency(((4/9)*0)+0.555556)
+        q.ChangeFrequency(((4/9)*leftSpeed)+0.555556)
     else:
         q.ChangeDutyCycle(0)
         p.ChangeDutyCycle(leftSpeed)
+        q.ChangeFrequency(((4/9)*0)+0.555556)
+        p.ChangeFrequency(((4/9)*leftSpeed)+0.555556)
     if rightSpeed<0:
         a.ChangeDutyCycle(0)
         b.ChangeDutyCycle(abs(rightSpeed))
+        a.ChangeFrequency(((4/9)*0)+0.555556)
+        b.ChangeFrequency(((4/9)*rightSpeed)+0.555556)
     else:
         b.ChangeDutyCycle(0)
         a.ChangeDutyCycle(rightSpeed)
+        b.ChangeFrequency(((4/9)*0)+0.555556)
+        a.ChangeFrequency(((4/9)*rightSpeed)+0.555556)
 
 # go(speed): controls motors in both directions together with positive/negative speed parameter. -100<= speed <= 100
 def goBoth(speed):
