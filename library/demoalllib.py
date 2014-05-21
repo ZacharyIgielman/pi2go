@@ -4,13 +4,10 @@ pi2go.init()
 
 globalDistance=0
 globalStop=0
-state=0
+state=1
 
 slowspeed = 20
 fastspeed = 100
-
-lastleft = 0
-lastright = 0
 
 finished = False
 
@@ -24,32 +21,18 @@ threading.Thread(target = updateDistance).start()
 
 def mainLoop():
   global globalDistance, globalStop, state, finished
-  global slowspeed, fastspeed, lastleft, lastright
+  global slowspeed, fastspeed
   while finished == False:
     if globalStop==1 or globalDistance<5:
       pi2go.stop()
     else:
-      if state==0:  # Standard Line Follower
+      if state==1:  # Standard Line Follower
         if pi2go.irLeftLine() and pi2go.irRightLine():
           pi2go.forward(40)
         elif pi2go.irRightLine()==False:
           pi2go.spinRight(fastspeed)
         elif pi2go.irLeftLine()==False:
           pi2go.spinLeft(fastspeed)
-
-      elif state==1:  # Fast Line Follower
-        left = pi2go.irLeftLine()
-        right = pi2go.irRightLine()
-        if left==0 and right==0:
-          pi2go.stop()
-        if left == 0 and lastleft == 1:
-          pi2go.turnForward(slowspeed,fastspeed)
-        elif right == 0 and lastright == 1:
-          pi2go.turnForward(fastspeed,slowspeed)
-        lastleft = left
-        lastright = right
-        time.sleep(0.01)
-
       elif state==2:  # Obstacle avoider (reverses then spins when near object)
         if globalDistance>15:
           pi2go.forward(50)
@@ -58,13 +41,11 @@ def mainLoop():
           time.sleep(0.5)
           pi2go.turnReverse(30,50)
           time.sleep(3)
-
       elif state==3:  # Obstacle avoider (spins when near object)
         if globalDistance>15:
           pi2go.forward(50)
         else:
           pi2go.spinLeft(50)
-
       elif state==4:  # Avoids objects using IR sensors only
         if pi2go.irAll()==False:
           pi2go.forward(50)
@@ -88,10 +69,10 @@ try:
     if inp=="":
       globalstop=0
       if state==4:
-        state=0
+        state=1
       else:
         state=state+1
-      if state==0:
+      if state==1:
         pi2go.setAllLEDs(0, 4095, 0)
       elif state==1:
         pi2go.forward(60)
