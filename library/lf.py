@@ -1,3 +1,8 @@
+#!/usr/bin/python
+# lf.py
+# slow line follower using pi2go library
+# Author : Zachary Igielman
+
 import sys, time
 import pi2go
 
