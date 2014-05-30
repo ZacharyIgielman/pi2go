@@ -1,3 +1,8 @@
+#!/usr/bin/python
+# irSensorAutonomous.py
+# navigator using ir obstacle detectors
+# Author : Zachary Igielman
+
 import time, RPi.GPIO as GPIO, sys
 
 fast=50
