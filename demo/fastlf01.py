@@ -1,3 +1,8 @@
+#!/usr/bin/python
+# fastlf01.py
+# speedy line follower and searcher
+# Author : Zachary Igielman
+
 import RPi.GPIO as GPIO, sys, threading, time
 
 #use physical pin numbering
