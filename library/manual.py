@@ -1,3 +1,8 @@
+#!/usr/bin/python
+# lightFollow.py
+# manual keyboard control (w forward, a left, d right, s back, other key stop) press enter using library
+# Author : Zachary Igielman
+
 import pi2go
 
 pi2go.init()
