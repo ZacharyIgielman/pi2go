@@ -1,3 +1,8 @@
+#!/usr/bin/python
+# lineFollowerBatteryTest.py
+# line follower with timer for battery measurement
+# Author : Zachary Igielman
+
 #import necessary modules
 import RPi.GPIO as GPIO, sys, threading, time
 
