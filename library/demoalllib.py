@@ -1,3 +1,8 @@
+#!/usr/bin/python
+# demoalllib.py
+# scroll through all autonomous modes with LED showing mode using the enter key or use letters for manual override
+# Author : Zachary Igielman
+
 import pi2go, threading, time, sys
 
 pi2go.init()
