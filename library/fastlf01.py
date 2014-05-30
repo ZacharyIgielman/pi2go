@@ -1,3 +1,8 @@
+#!/usr/bin/python
+# fastlf01.py
+# speedy line follower with LEDs using library
+# Author : Zachary Igielman
+
 import sys, time
 import pi2go
 
