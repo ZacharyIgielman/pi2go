@@ -1,3 +1,8 @@
+#!/usr/bin/python
+# lf.py
+# slow line follower with LEDs
+# Author : Zachary Igielman
+
 import RPi.GPIO as GPIO, sys, threading, time
 from Adafruit_PWM_Servo_Driver import PWM
 
