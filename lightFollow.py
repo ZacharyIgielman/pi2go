@@ -1,3 +1,8 @@
+#!/usr/bin/python
+# lightFollow.py
+# chance light source using light detectors
+# Author : Zachary Igielman
+
 import RPi.GPIO as GPIO, sys, threading, time
 from Adafruit_PWM_Servo_Driver import PWM
 from sgh_PCF8591P import sgh_PCF8591P
