@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # lightFollow.py
-# chance light source using light detectors
+# chase light source using light detectors
 # Author : Zachary Igielman
 
 import RPi.GPIO as GPIO, sys, threading, time
