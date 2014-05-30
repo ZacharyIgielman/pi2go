@@ -1,3 +1,8 @@
+#!/usr/bin/python
+# sonarNav.py
+# navigator with utrasonic distance sensor using pi2go library
+# Author : Zachary Igielman
+
 import time
 import pi2go
 
