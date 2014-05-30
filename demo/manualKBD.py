@@ -1,3 +1,8 @@
+#!/usr/bin/python
+# manualKBD.py
+# manual keyboard control
+# Author : Zachary Igielman
+
 import RPi.GPIO as GPIO, sys, threading, time
 
 #use physical pin numbering
