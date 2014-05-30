@@ -1,3 +1,8 @@
+#!/usr/bin/python
+# lineFollower.py
+# simple line follower without using pi2go library
+# Author : Zachary Igielman
+
 import RPi.GPIO as GPIO, sys, threading, time
 
 #use physical pin numbering
