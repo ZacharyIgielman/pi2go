@@ -1,4 +1,7 @@
-# Testing PCF8591 ADC Chip
+#!/usr/bin/python
+# test8591.py
+# read all four light sensors via the adc
+# Author : Zachary Igielman
 
 import time
 import sys
