@@ -1,3 +1,8 @@
+#!/usr/bin/python
+# readLightSensor.py
+# GUI reading of light detectors
+# Author : Zachary Igielman
+
 # must use Python 2.7
 import smbus
 import time
