@@ -1,3 +1,8 @@
+#!/usr/bin/python
+# demoall.py
+# multi-mode autonomous bot with sonar, line follower and ir obstacle modes, user enter key to change mode
+# Author : Zachary Igielman
+
 #coding: utf-8
 import RPi.GPIO as GPIO, sys, threading, time
 from Adafruit_PWM_Servo_Driver import PWM
