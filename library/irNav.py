@@ -1,3 +1,8 @@
+#!/usr/bin/python
+# irNav.py
+# navigate using ir obstacle detectors with pi2go library
+# Author : Zachary Igielman
+
 import time
 import pi2go
 
