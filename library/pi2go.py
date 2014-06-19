@@ -3,6 +3,7 @@
 # Python Module to externalise all Pi2Go specific hardware
 #
 # Created by Gareth Davies and Zachary Igielman, May 2014
+# Updated June 2014 to include Pi2Go-Lite within same framework
 # Copyright 4tronix
 #
 # This code is in the public domain and may be freely copied and used
@@ -13,14 +14,17 @@
 
 #======================================================================
 # General Functions
+# (Both versions)
 #
 # init(). Initialises GPIO pins, switches motors and LEDs Off, etc
 # cleanup(). Sets all motors and LEDs off and sets GPIO to standard values
+# version(). Returns 1 for Full Pi2Go, and 2 for Pi2Go-Lite. Invalid until after init() has been called
 #======================================================================
 
 
 #======================================================================
 # Motor Functions
+# (Both Versions)
 #
 # stop(): Stops both motors
 # forward(speed): Sets both motors to move forward at speed. 0 <= speed <= 100
@@ -36,6 +40,7 @@
 
 #======================================================================
 # RGB LED Functions
+# (Full Pi2Go only)
 #
 # setLED(LED, Red, Green, Blue): Sets the LED specified to required RGB value. 0 >= LED <= 4; 0 <= R,G,B <= 4095
 # setAllLEDs(Red, Green, Blue): Sets all LEDs to required RGB. 0 <= R,G,B <= 4095
@@ -44,10 +49,11 @@
 
 #======================================================================
 # IR Sensor Functions
+# (Both Versions)
 #
 # irLeft(): Returns state of Left IR Obstacle sensor
 # irRight(): Returns state of Right IR Obstacle sensor
-# irCentre(): Returns state of Centre IR Obstacle sensor
+# irCentre(): Returns state of Centre IR Obstacle sensor (Full Pi2Go Only)
 # irAll(): Returns true if any of the Obstacle sensors are triggered
 # irLeftLine(): Returns state of Left IR Line sensor
 # irRightLine(): Returns state of Right IR Line sensor
@@ -56,6 +62,7 @@
 
 #======================================================================
 # UltraSonic Functions
+# (Both Versions)
 #
 # getDistance(). Returns the distance in cm to the nearest reflecting object. 0 == no object
 #======================================================================
@@ -63,6 +70,7 @@
 
 #======================================================================
 # Light Sensor Functions
+# (Full Pi2Go only)
 #
 # getLight(Sensor). Returns the value 0..1023 for the selected sensor, 0 <= Sensor <= 3
 # getLightFL(). Returns the value 0..1023 for Front-Left light sensor
@@ -72,10 +80,25 @@
 #======================================================================
 
 
+#======================================================================
+# Servo Functions
+# 
+# startServos(). Initialises the servo background process
+# stop Servos(). terminates the servo background process
+# setServo(Servo, Degrees). Sets the servo to position in degrees -90 to +90
+#======================================================================
+
+
 # Import all necessary libraries
-import RPi.GPIO as GPIO, sys, threading, time
+import RPi.GPIO as GPIO, sys, threading, time, os
 from Adafruit_PWM_Servo_Driver import PWM
 from sgh_PCF8591P import sgh_PCF8591P
+
+# Define Type of Pi2Go
+PGNone = 0
+PGFull = 1
+PGLite = 2
+PGType = PGNone # Set to None until we find out which during init()
 
 # Pins 24, 26 Left Motor
 # Pins 19, 21 Right Motor
@@ -87,7 +110,7 @@ R2 = 21
 # Define obstacle sensors and line sensors
 irFL = 7
 irFR = 11
-irMID = 15
+irMID = 15  # this sensor not available on Lite version
 lineRight = 13
 lineLeft = 12
 
@@ -100,16 +123,22 @@ pwmMax = 4095 # maximum PWM value
 # Define Sonar Pin (same pin for both Ping and Echo
 sonar = 8
 
+# Define if servo background process is active
+ServosActive = False
 
 #======================================================================
 # General Functions
 #
 # init(). Initialises GPIO pins, switches motors and LEDs Off, etc
 def init():
-    global p, q, a, b, pwm, pcfADC
-    # Initialise the PWM device using the default address
-    pwm = PWM(0x40, debug = False)
-    pwm.setPWMFreq(60)  # Set frequency to 60 Hz
+    global p, q, a, b, pwm, pcfADC, PGType
+    PGType = PGFull
+    # Initialise the PCA9685 PWM device using the default address
+    try:
+        pwm = PWM(0x40, debug = False)
+        pwm.setPWMFreq(60)  # Set frequency to 60 Hz
+    except:
+        PGType = PGLite # No PCA9685 so set to Pi2Go-Lite
 
     #use physical pin numbering
     GPIO.setmode(GPIO.BOARD)
@@ -144,23 +173,34 @@ def init():
     pcfADC = None # ADC object
     try:
         pcfADC = sgh_PCF8591P(1) #i2c, 0x48)
-        print pcfADC
-        print "PCF8591P Detected"
     except:
-        print "No PCF8591 Detected"
+        PGType = PGLite
+
+    # initialise servos (Pi2Go-Lie only)
+    if PGType == PGLite:
+        startServos()
 
 
 # cleanup(). Sets all motors and LEDs off and sets GPIO to standard values
 def cleanup():
     stop()
     setAllLEDs(0, 0, 0)
+    stopServod()
+    time.sleep(1)
     GPIO.cleanup()
+
+
+# version(). Returns 1 for Full Pi2Go, and 2 for Pi2Go-Lite. Invalid until after init() has been called
+def version():
+    return PGType
+
 # End of General Functions
 #======================================================================
 
 
 #======================================================================
 # Motor Functions
+# (both versions)
 #
 # stop(): Stops both motors
 def stop():
@@ -275,12 +315,14 @@ def goBoth(speed):
 
 #======================================================================
 # RGB LED Functions
+# (Full version only)
 #
 # setLED(LED, Red, Green, Blue): Sets the LED specified to required RGB value. 0 >= LED <= 4; 0 <= R,G,B <= 4095
 def setLEDs(LED, red, green, blue):
-  pwm.setPWM(LED * 3 + Red, 0, pwmMax - red)
-  pwm.setPWM(LED * 3 + Green, 0, pwmMax - green)
-  pwm.setPWM(LED * 3 + Blue, 0, pwmMax - blue)
+    if PGType == PGFull:
+        pwm.setPWM(LED * 3 + Red, 0, pwmMax - red)
+        pwm.setPWM(LED * 3 + Green, 0, pwmMax - green)
+        pwm.setPWM(LED * 3 + Blue, 0, pwmMax - blue)
 
 # setAllLEDs(Red, Green, Blue): Sets all LEDs to required RGB. 0 <= R,G,B <= 4095
 def setAllLEDs (red, green, blue):
@@ -309,7 +351,10 @@ def irRight():
         return False
     
 # irCentre(): Returns state of Centre IR Obstacle sensor
+# (Not available on Pi2Go-Lite)
 def irCentre():
+    if PGType != PGFull:
+        return False
     if GPIO.input(irMID)==0:
         return True
     else:
@@ -317,7 +362,7 @@ def irCentre():
     
 # irAll(): Returns true if any of the Obstacle sensors are triggered
 def irAll():
-    if GPIO.input(irFL)==0 or GPIO.input(irFR)==0 or GPIO.input(irMID)==0:
+    if GPIO.input(irFL)==0 or GPIO.input(irFR)==0 or (PGType==PGFull and GPIO.input(irMID)==0):
         return True
     else:
         return False
@@ -344,6 +389,8 @@ def irRightLine():
 # UltraSonic Functions
 #
 # getDistance(). Returns the distance in cm to the nearest reflecting object. 0 == no object
+# (Both versions)
+#
 def getDistance():
     GPIO.setup(sonar, GPIO.OUT)
     # Send 10us pulse to trigger
@@ -362,10 +409,8 @@ def getDistance():
     # Calculate pulse length
     elapsed = stop-start
     # Distance pulse travelled in that time is time
-    # multiplied by the speed of sound (cm/s)
-    distance = elapsed * 34000
-    # That was the distance there and back so halve the value
-    distance = distance / 2
+    # multiplied by the speed of sound 34000(cm/s) divided by 2
+    distance = elapsed * 17000
     return distance
 
 # End of UltraSonic Functions    
@@ -374,32 +419,82 @@ def getDistance():
 
 #======================================================================
 # Light Sensor Functions
+# (Full Pi2Go Only)
 #
 # getLight(sensor). Returns the value 0..1023 for the selected sensor, 0 <= Sensor <= 3
 def getLight(sensor):
+    if PGType != PGFull:
+        return False
     value  = pcfADC.readADC(sensor)
     return value
 
 # getLightFL(). Returns the value 0..1023 for Front-Left light sensor
 def getLightFL():
+    if PGType != PGFull:
+        return False
     value  = pcfADC.readADC(0)
     return value
 
 # getLightFR(). Returns the value 0..1023 for Front-Right light sensor
 def getLightFR(sensor):
+    if PGType != PGFull:
+        return False
     value  = pcfADC.readADC(1)
     return value
 
 # getLightBL(). Returns the value 0..1023 for Back-Left light sensor
 def getLightBL(sensor):
+    if PGType != PGFull:
+        return False
     value  = pcfADC.readADC(2)
     return value
 
 # getLightBR(). Returns the value 0..1023 for Back-Right light sensor
 def getLightBR(sensor):
+    if PGType != PGFull:
+        return False
     value  = pcfADC.readADC(3)
     return value
 
 # End of Light Sensor Functions
 #======================================================================
+
+
+#======================================================================
+# Servo Functions
+# Pi2Go-Lite uses ServoD to control servos
+# Pi2Go Full uses the PCA9685 hardware controller
+
+def setServo(Servo, Degrees):
+    #print "ServosActive:", ServosActive
+    if ServosActive == False:
+        startServos()
+    pinServod (Servo, Degrees) # for now, simply pass on the input values
+
+def stopServos():
+    stopServod()
+    
+def startServos():
+    ServosActive = True
+    startServod()
+    
+def startServod():
+    global ServosActive
+    #print "Starting servod. ServosActove:", ServosActive
+    SCRIPTPATH = os.path.split(os.path.realpath(__file__))[0]
+    os.system("sudo pkill -f servod")
+    os.system(SCRIPTPATH +'/servod --idle-timeout=20000 --p1pins="18,22"')
+    #print (SCRIPTPATH +'/servod --idle-timeout=20000 --p1pins="18,22"')
+    ServosActive = True
+
+def pinServod(pin, degrees):
+    #print pin, degrees
+    #print ("echo " + str(pin) + "=" + str(50+ ((90 - degrees) * 200 / 180)) + " > /dev/servoblaster")
+    os.system("echo " + str(pin) + "=" + str(50+ ((90 - degrees) * 200 / 180)) + " > /dev/servoblaster")
+    
+def stopServod():
+    global ServosActive
+    os.system("sudo pkill -f servod")
+    ServosActive = False
+        
 
